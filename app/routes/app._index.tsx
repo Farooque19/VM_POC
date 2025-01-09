@@ -11,7 +11,7 @@ import { useLoaderData, json, Link } from '@remix-run/react';
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const { admin } = await authenticate.admin(request)
-  const response = admin.graphql(`#graphql
+  const response = await admin.graphql(`#graphql
         query FetchAllCollections {
   collections(first: 50) {
     edges {
@@ -28,14 +28,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }
   }
 }`)
-  const collectionsData = (await (await response).json()).data
-  return json({
+
+  const collectionsData = (await response.json()).data
+  
+  return {
     collections: collectionsData.collections.edges
-  })
+  }
 
 }
 export default function Products() {
   const { collections } = useLoaderData<typeof loader>();
+  console.log(collections)
   const rowMarkup = collections.map((collection: any, index: number) => (
     <IndexTable.Row
       id={collection.node.legacyResourceId}

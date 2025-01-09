@@ -1,0 +1,37 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "66c2a4f1d45d8b5a3b271abf4e7c9d72"
+application_url = "https://prefix-lime-sublime-meeting.trycloudflare.com"
+embedded = true
+name = "Remix-SKS"
+handle = "remix-sks"
+
+[webhooks]
+api_version = "2024-10"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_products,write_products"
+
+[auth]
+redirect_urls = [
+  "https://prefix-lime-sublime-meeting.trycloudflare.com/auth/callback",
+  "https://prefix-lime-sublime-meeting.trycloudflare.com/auth/shopify/callback",
+  "https://prefix-lime-sublime-meeting.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
+
+[build]
+dev_store_url = "sourabh-2.myshopify.com"
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true
