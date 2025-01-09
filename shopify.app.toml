@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "66c2a4f1d45d8b5a3b271abf4e7c9d72"
-application_url = "https://prefix-lime-sublime-meeting.trycloudflare.com"
+application_url = "https://facilities-construction-constitutes-reply.trycloudflare.com"
 embedded = true
 name = "Remix-SKS"
 handle = "remix-sks"
@@ -23,9 +23,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://prefix-lime-sublime-meeting.trycloudflare.com/auth/callback",
-  "https://prefix-lime-sublime-meeting.trycloudflare.com/auth/shopify/callback",
-  "https://prefix-lime-sublime-meeting.trycloudflare.com/api/auth/callback"
+  "https://facilities-construction-constitutes-reply.trycloudflare.com/auth/callback",
+  "https://facilities-construction-constitutes-reply.trycloudflare.com/auth/shopify/callback",
+  "https://facilities-construction-constitutes-reply.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
