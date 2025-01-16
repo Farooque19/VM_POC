@@ -1,0 +1,31 @@
+import type VariantInterface from "./VariantInterface";
+
+export default interface ProductInterface {
+  productId: string,
+  title: string,
+  handle: string,
+  price: number,
+  absoluteDiscount: number,
+  percentageDiscount: number,
+  isInStock: boolean,
+  isInStockWithBO: boolean,
+  image: {
+    url: string,
+  },
+  variantsInventory: Record<string, VariantInterface>,
+  vendor: string,
+  productType: string,
+  tags: string[],
+  createdAt: string,
+  updatedAt: string,
+  publishedAt: string,
+  createdAtTimestamp: number,
+  updatedAtTimestamp: number,
+  publishedAtTimestamp: number | null,
+  totalInventory: number,
+  variantsCount: number,
+  tracksInventory: number,
+  variantsInventoryArray: number[],
+  variantsStockRatio: number,
+  variantsWithBOStockRatio: number,
+}

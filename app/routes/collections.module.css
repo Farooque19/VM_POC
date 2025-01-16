@@ -1,0 +1,7 @@
+.collection-image {
+  width: 150px; /* Set a uniform width */
+  height: 150px; /* Set a uniform height */
+  object-fit: cover; /* Ensures the image fills the dimensions without distortion */
+  border-radius: 8px; /* Optional: Rounded corners */
+  border: 1px solid #ddd; /* Optional: Border around images */
+}

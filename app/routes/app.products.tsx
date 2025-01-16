@@ -2,17 +2,17 @@ import {Layout, Page, Card, Text, Box, ResourceList, Thumbnail, ResourceItem} fr
 import type {LoaderFunctionArgs} from "@remix-run/node";
 import {authenticate} from 'app/shopify.server';
 import {ProductIcon} from '@shopify/polaris-icons';
-import {useLoaderData, json} from '@remix-run/react';
+import {useLoaderData} from '@remix-run/react';
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
-let hasNextPage: boolean = true;
-let afterCursor: string | null = null;
+// let hasNextPage: boolean = true;
+// let afterCursor: string | null = null;
 
-while (hasNextPage) {
-
-}
+// while (hasNextPage) {
+//
+// }
   const {admin} = await authenticate.admin(request)
-  const response = await admin.graphql(`#graphql
+  const response: any = await admin.graphql(`#graphql
         query fetchProducts {
             products(first: 10) {
                 edges {
@@ -41,9 +41,9 @@ while (hasNextPage) {
 
   const productsData = await response.json();
   console.log(productsData);
-  return json({
+  return {
     products: productsData.data.products.edges
-  })
+  }
 
 }
 export default function Products() {
