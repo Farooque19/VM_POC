@@ -4,3 +4,5 @@ export default interface VariantInterface {
   price: number;
   compareAtPrice: number;
 }
+
+
