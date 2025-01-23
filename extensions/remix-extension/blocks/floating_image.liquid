@@ -1,0 +1,21 @@
+{% assign variable = 'variable' %}
+
+{% if variable == 'variable' %}
+  <div style="position: fixed; bottom: 0; right: 0">
+    {{ "thumbs-up.png" | asset_url | img_tag }}
+    <p>Shop Name: {{ shop.name }}</p>
+  </div>
+{% endif %}
+
+
+
+{% schema %}
+{
+  "name": "App Embed",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}
+
+
+

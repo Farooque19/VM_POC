@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "66c2a4f1d45d8b5a3b271abf4e7c9d72"
-application_url = "https://william-olympic-identifying-captured.trycloudflare.com"
+application_url = "https://forget-src-tune-relating.trycloudflare.com"
 embedded = true
 name = "Remix-SKS"
 handle = "remix-sks"
@@ -23,9 +23,9 @@ scopes = "read_products,write_products,read_inventory"
 
 [auth]
 redirect_urls = [
-  "https://william-olympic-identifying-captured.trycloudflare.com/auth/callback",
-  "https://william-olympic-identifying-captured.trycloudflare.com/auth/shopify/callback",
-  "https://william-olympic-identifying-captured.trycloudflare.com/api/auth/callback"
+  "https://forget-src-tune-relating.trycloudflare.com/auth/callback",
+  "https://forget-src-tune-relating.trycloudflare.com/auth/shopify/callback",
+  "https://forget-src-tune-relating.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

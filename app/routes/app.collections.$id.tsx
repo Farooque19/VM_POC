@@ -8,20 +8,13 @@ import type ProductInterface from "../interface/ProductInterface";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import {useMemo} from "react";
+import type {PageInfo} from "../interface/PageInfoInterface";
 
 dayjs.extend(utc);
 
 function checkVariantStock(inventoryItemTracked: boolean, inventoryQuantity: number, inventoryPolicy: InventoryPolicy): boolean {
-  let isInStock: boolean;
-  if (inventoryItemTracked) {
-    if (inventoryQuantity > 0)
-      isInStock = true;
-    else
-      isInStock = inventoryPolicy !== 'DENY';
-  } else
-    isInStock = true;
-
-  return isInStock;
+  if (!inventoryItemTracked) return true;
+  return inventoryQuantity > 0 || inventoryPolicy !== 'DENY';
 }
 
 
@@ -36,12 +29,12 @@ export const loader = async ({request, params}: LoaderFunctionArgs) => {
   const rel: string | null = searchParam.get('rel');
   const cursor: string | null = searchParam.get('cursor');
 
-  let searchString = `first: 50`;
+  let searchStrings: string = `first: 50`;
 
   if (rel === "next" && cursor) {
-    searchString = `first: 50, after: "${cursor}"`;
+    searchStrings = `first: 50, after: "${cursor}"`;
   } else if (rel === "previous" && cursor) {
-    searchString = `last: 50, before: "${cursor}"`;
+    searchStrings = `last: 50, before: "${cursor}"`;
   }
 
   const collectionId = `gid://shopify/Collection/${id}`;
@@ -50,10 +43,10 @@ export const loader = async ({request, params}: LoaderFunctionArgs) => {
 
   const products: any[] = [];
   try {
-    const response: any = await admin.graphql(`
+    const response: Response = await admin.graphql(`
         query GetCollectionProducts($id: ID!) {
           collection(id: $id) {
-            products(${searchString}) {
+            products(${searchStrings}) {
               edges {
                 node {
                   legacyResourceId
@@ -97,8 +90,7 @@ export const loader = async ({request, params}: LoaderFunctionArgs) => {
     const responseData = await response.json();
     const data = responseData.data.collection.products;
     products.push(...data.edges.map((edge: any) => edge.node));
-    const pageInfo = data.pageInfo;
-
+    const pageInfo: PageInfo = data.pageInfo;
 
     async function fetchVariants(productIds: string[], retries: number, delay: number): Promise<any[]> {
       const variants: any[] = [];
@@ -107,7 +99,7 @@ export const loader = async ({request, params}: LoaderFunctionArgs) => {
 
       try {
         while (hasNextPage) {
-          const response: any = await admin.graphql(`
+          const response: Response = await admin.graphql(`
         query GetProductVariants($after: String, $query: String) {
           productVariants(first: 50, query: $query, after: $after) {
             nodes {
@@ -149,7 +141,7 @@ export const loader = async ({request, params}: LoaderFunctionArgs) => {
           await new Promise(resolve => setTimeout(resolve, delay));
           return await fetchVariants(productIds, retries - 1, delay);
         }
-        console.log(`error occurred: ${error}`);
+        throw new Error(`Error occurred! Failed to fetch variants: ${error}`);
       }
 
       return variants;
@@ -251,12 +243,7 @@ export const loader = async ({request, params}: LoaderFunctionArgs) => {
       pageInfo: pageInfo
     };
   } catch (error) {
-    console.log(`error occurred: ${error}`);
-    return {
-      products: [],
-      pageInfo: {},
-      collectionId
-    }
+    throw new Error(`Failed to load collection: ${error}`);
   }
 };
 
@@ -281,7 +268,6 @@ export const action = async ({request}: ActionFunctionArgs) => {
   const moveBatches: any[] = [];
   for (let i: number = 0; i < moves.length; i += MAX_MOVES_PER_REQUEST) {
     moveBatches.push(moves.slice(i, i + MAX_MOVES_PER_REQUEST));
-    console.log('Moves: ', moveBatches);
   }
 
   const jobIds: string[] = [];
@@ -313,6 +299,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
       const responseData: any = await response.json();
       const jobId: string = responseData.data.collectionReorderProducts.job.id;
       jobIds.push(jobId);
+      console.log(jobIds);
     } catch (err) {
       console.error(err);
     }
@@ -334,11 +321,11 @@ export default function Products() {
     return {
       previous: {
         disabled: !hasPreviousPage || !startCursor,
-        link: hasPreviousPage && startCursor ? `/app/collection/${numericalId}?rel=previous&cursor=${startCursor}` : null,
+        link: hasPreviousPage && startCursor ? `/app/collections/${numericalId}?rel=previous&cursor=${startCursor}` : null,
       },
       next: {
         disabled: !hasNextPage || !endCursor,
-        link: hasNextPage && endCursor ? `/app/collection/${numericalId}?rel=next&cursor=${endCursor}` : null,
+        link: hasNextPage && endCursor ? `/app/collections/${numericalId}?rel=next&cursor=${endCursor}` : null,
       },
     };
   }, [numericalId, pageInfo]);
@@ -417,12 +404,8 @@ export default function Products() {
             type='hidden'
             name='moves'
             value={JSON.stringify([
-              {id: "gid://shopify/Product/6933515698248", newPosition: "1"},
+              {id: "gid://shopify/Product/6933515698248", newPosition: "0"},
               {id: "gid://shopify/Product/6933515468872", newPosition: "2"},
-              {id: "gid://shopify/Product/6933515665480", newPosition: "0"},
-              {id: "gid://shopify/Product/6933517074504", newPosition: "4"},
-              {id: "gid://shopify/Product/6933514977352", newPosition: "5"},
-              {id: "gid://shopify/Product/6933517598792", newPosition: "3"}
             ])}
           />
           <div style={{padding: "16px"}}>

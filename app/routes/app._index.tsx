@@ -4,10 +4,11 @@ import {
   Text,
   Page, Button, Pagination,
 } from '@shopify/polaris';
-
+import type {PageInfo} from "../interface/PageInfoInterface";
 import type {LoaderFunction, LoaderFunctionArgs} from "@remix-run/node";
 import {authenticate} from 'app/shopify.server';
 import {useLoaderData, Link, useNavigate} from '@remix-run/react';
+import type {NavigateFunction} from '@remix-run/react';
 import {useMemo} from "react";
 
 export const loader: LoaderFunction = async ({request}: LoaderFunctionArgs) => {
@@ -17,18 +18,18 @@ export const loader: LoaderFunction = async ({request}: LoaderFunctionArgs) => {
   const rel: string | null = searchParam.get('rel');
   const cursor: string | null = searchParam.get('cursor');
 
-  let searchString = `first: 50`;
+  let searchString: string = `first: 100`;
 
   if (rel === "next" && cursor) {
-    searchString = `first: 50, after: "${cursor}"`;
+    searchString = `first: 100, after: "${cursor}"`;
   } else if (rel === "previous" && cursor) {
-    searchString = `last: 50, before: "${cursor}"`;
+    searchString = `last: 100, before: "${cursor}"`;
   }
 
   let collections: string[] = [];
 
-  try{
-    const collectionQuery: any = await admin.graphql(`
+  try {
+    const collectionQuery: Response = await admin.graphql(`
       #graphql
         query getAllCollections {
           collections(${searchString}) {
@@ -60,21 +61,17 @@ export const loader: LoaderFunction = async ({request}: LoaderFunctionArgs) => {
       collectionsData: collections,
       pageInfo: collectionResponse.data.collections.pageInfo,
     }
-  }catch(e){
-    console.log(`Error fetching collections: ${e}`);
-    return {
-      collectionsData: [],
-      pageInfo: {}
-    }
+  } catch (e) {
+    throw new Error(`Error occurred while getting collections: ${e}`);
   }
 }
 export default function Products() {
   const loaderData = useLoaderData<typeof loader>();
   const collections = loaderData.collectionsData;
-  const pageInfo = loaderData.pageInfo;
-  const navigate = useNavigate();
+  const pageInfo: PageInfo = loaderData.pageInfo;
+  const navigate: NavigateFunction = useNavigate();
   const pagination = useMemo(() => {
-    const { hasNextPage, hasPreviousPage, startCursor, endCursor } = pageInfo || {};
+    const {hasNextPage, hasPreviousPage, startCursor, endCursor} = pageInfo || {};
 
     return {
       previous: {
@@ -99,7 +96,7 @@ export default function Products() {
         </Text>
       </IndexTable.Cell>
       <IndexTable.Cell>{collection.title}</IndexTable.Cell>
-      <IndexTable.Cell> <Link to={`/app/collection/${collection.legacyResourceId}`}>
+      <IndexTable.Cell> <Link to={`/app/collections/${collection.legacyResourceId}`}>
         <Button>VM</Button>
       </Link></IndexTable.Cell>
     </IndexTable.Row>
@@ -121,24 +118,26 @@ export default function Products() {
           ]}
         >
           {rowMarkup}
-          <div className="navigation">
-            <Pagination
-              hasPrevious={!pagination.previous.disabled}
-              onPrevious={() => {
-                if (pagination.previous.link) {
-                  navigate(pagination.previous.link);
-                }
-              }}
-              hasNext={!pagination.next.disabled}
-              onNext={() => {
-                if (pagination.next.link) {
-                  navigate(pagination.next.link);
-                }
-              }}
-            />
-          </div>
+
         </IndexTable>
+
       </LegacyCard>
+      <div className="navigation">
+        <Pagination
+          hasPrevious={!pagination.previous.disabled}
+          onPrevious={() => {
+            if (pagination.previous.link) {
+              navigate(pagination.previous.link);
+            }
+          }}
+          hasNext={!pagination.next.disabled}
+          onNext={() => {
+            if (pagination.next.link) {
+              navigate(pagination.next.link);
+            }
+          }}
+        />
+      </div>
 
     </Page>
   )
