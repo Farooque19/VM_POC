@@ -18,12 +18,12 @@ export const loader: LoaderFunction = async ({request}: LoaderFunctionArgs) => {
   const rel: string | null = searchParam.get('rel');
   const cursor: string | null = searchParam.get('cursor');
 
-  let searchString: string = `first: 100`;
+  let searchString: string = `first: 10`;
 
   if (rel === "next" && cursor) {
-    searchString = `first: 100, after: "${cursor}"`;
+    searchString = `first: 10, after: "${cursor}"`;
   } else if (rel === "previous" && cursor) {
-    searchString = `last: 100, before: "${cursor}"`;
+    searchString = `last: 10, before: "${cursor}"`;
   }
 
   let collections: string[] = [];

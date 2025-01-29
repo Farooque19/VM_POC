@@ -7,6 +7,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   console.log(`Received ${topic} webhook for ${shop}`);
 
+  console.log(`session: ${session}`);
+
   // Webhook requests can trigger multiple times and after an app has already been uninstalled.
   // If this webhook already ran, the session may have been deleted previously.
   if (session) {
@@ -15,3 +17,5 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   return new Response();
 };
+
+

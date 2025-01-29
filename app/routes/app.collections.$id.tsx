@@ -404,7 +404,7 @@ export default function Products() {
             type='hidden'
             name='moves'
             value={JSON.stringify([
-              {id: "gid://shopify/Product/6933515698248", newPosition: "0"},
+              {id: "gid://shopify/Product/6933515698248", newPosition: "4"},
               {id: "gid://shopify/Product/6933515468872", newPosition: "2"},
             ])}
           />
